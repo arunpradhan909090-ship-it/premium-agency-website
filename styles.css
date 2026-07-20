@@ -1128,12 +1128,17 @@ button { font-family: inherit; cursor: pointer; border: none; }
   background-size: cover;
   background-position: center;
   opacity: 0.06;
-  z-index: -1;
+  z-index: 0;
+  pointer-events: none;
   transition: var(--transition);
 }
 .why-card:hover::before {
   opacity: 0.14;
   transform: scale(1.08);
+}
+.why-card > * {
+  position: relative;
+  z-index: 1;
 }
 
 /* Why card background image mappings */
