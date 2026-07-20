@@ -199,4 +199,19 @@ document.addEventListener('DOMContentLoaded', () => {
     successScreen.style.display = 'flex';
   });
 
+  // ── Ensure Hero Background Video plays programmatically ──
+  const bgVideo = document.querySelector('.hero-bg-video');
+  if (bgVideo) {
+    bgVideo.play().catch(() => {
+      // Play on first user interaction if autoplay is blocked
+      const playVideo = () => {
+        bgVideo.play();
+        document.removeEventListener('click', playVideo);
+        document.removeEventListener('touchstart', playVideo);
+      };
+      document.addEventListener('click', playVideo);
+      document.addEventListener('touchstart', playVideo);
+    });
+  }
+
 });
