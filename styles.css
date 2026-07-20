@@ -361,6 +361,8 @@ button { font-family: inherit; cursor: pointer; border: none; }
   grid-template-columns: 1fr 1fr;
   gap: 60px;
   align-items: center;
+  position: relative;
+  z-index: 3;
 }
 .hero-content { position: relative; z-index: 2; }
 .hero-badge {
@@ -1694,7 +1696,6 @@ button { font-family: inherit; cursor: pointer; border: none; }
 /* ===== RESPONSIVE ===== */
 @media (max-width: 1024px) {
   .hero .container { grid-template-columns: 1fr; gap: 50px; }
-  .hero-visual { order: -1; }
   .mockup-browser { width: 100%; max-width: 420px; }
   .services-grid, .pricing-grid, .why-grid, .portfolio-grid {
     grid-template-columns: repeat(2, 1fr);
@@ -1707,31 +1708,7 @@ button { font-family: inherit; cursor: pointer; border: none; }
   .nav-links, .nav-cta { display: none; }
   .mobile-toggle { display: flex; }
   .hero { min-height: auto; padding: 120px 0 60px; }
-  .hero .container {
-    grid-template-columns: 1.35fr 0.65fr;
-    gap: 20px;
-    align-items: center;
-  }
-  .hero-visual {
-    order: 1;
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-  }
-  .mockup-browser {
-    width: 100%;
-    max-width: 130px;
-    opacity: 0.35;
-    transform: scale(0.95) rotate(-3deg);
-    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-    pointer-events: none;
-    border: 1px solid rgba(255, 255, 255, 0.12);
-  }
-  .mockup-glow {
-    inset: -15px;
-    opacity: 0.4;
-  }
-  .hero-title { font-size: clamp(1.8rem, 6.2vw, 2.5rem); }
+  .hero-title { font-size: clamp(2.2rem, 8vw, 3rem); }
   .hero-bullets { flex-direction: column; gap: 8px; }
   .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 16px; }
   .services-grid, .pricing-grid, .why-grid, .portfolio-grid, .reviews-grid {
@@ -1750,14 +1727,7 @@ button { font-family: inherit; cursor: pointer; border: none; }
 }
 @media (max-width: 480px) {
   .stat-number { font-size: 1.8rem; }
-  .hero .container {
-    grid-template-columns: 1.4fr 0.6fr;
-    gap: 12px;
-  }
-  .mockup-browser {
-    max-width: 100px;
-    opacity: 0.25;
-  }
+  .mockup-browser { width: 100%; }
 }
 
 /* ===== SECTION BGs ===== */
@@ -2098,5 +2068,28 @@ button { font-family: inherit; cursor: pointer; border: none; }
   width: 100%;
   justify-content: center;
   padding: 13px;
+}
+
+/* ===== HERO BG VIDEO ===== */
+.hero-bg-video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 1;
+  pointer-events: none;
+}
+.hero-video-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(7, 7, 7, 0.72) 0%,
+    rgba(7, 7, 7, 0.88) 100%
+  );
+  z-index: 2;
+  pointer-events: none;
 }
 
