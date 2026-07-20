@@ -158,7 +158,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Select all primary CTA triggers on the page
   const ctaButtons = document.querySelectorAll(
-    'a[href="#contact"], .cta-btn, .nav-cta a, .hero-actions a.btn-primary, .service-card .btn-primary'
+    '.btn-primary:not(.submit-btn), .cta-btn'
   );
 
   ctaButtons.forEach(btn => {
