@@ -238,17 +238,12 @@ button { font-family: inherit; cursor: pointer; border: none; }
   letter-spacing: -0.02em;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
 }
-.logo-img {
-  height: 38px;
-  width: 38px;
+.nav-logo .logo-img {
+  height: 36px;
+  width: auto;
   object-fit: contain;
-  border-radius: 50%;
-  transition: var(--transition);
-}
-.nav-logo:hover .logo-img {
-  transform: scale(1.05);
 }
 .nav-logo .accent { color: var(--accent-light); }
 .nav-links {
@@ -1741,6 +1736,7 @@ button { font-family: inherit; cursor: pointer; border: none; }
 @media (max-width: 480px) {
   .stat-number { font-size: 1.8rem; }
   .mockup-browser { width: 100%; }
+  .nav-logo .logo-img { height: 30px; }
 }
 
 /* ===== SECTION BGs ===== */
