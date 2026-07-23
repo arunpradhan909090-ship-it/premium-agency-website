@@ -216,32 +216,22 @@ document.addEventListener('DOMContentLoaded', () => {
     const ctx = canvas.getContext('2d');
     const frameCount = 40;
     const images = [];
-    let loadedCount = 0;
+    const loadedFlags = new Array(frameCount).fill(false);
     let currentFrameIndex = 0;
     
     // Path generator
-    const getFramePath = index => 
+    const getPrimaryPath = index => 
       `ezgif-58268a66386d7d20-jpg/ezgif-frame-${index.toString().padStart(3, '0')}.jpg`;
-      
-    // Preload images
-    for (let i = 1; i <= frameCount; i++) {
-      const img = new Image();
-      img.src = getFramePath(i);
-      img.onload = () => {
-        loadedCount++;
-        if (loadedCount === frameCount) {
-          // Initial draw when all images loaded
-          requestAnimationFrame(() => renderFrame(0));
-        }
-      };
-      images.push(img);
-    }
-    
+    const getFallbackPath = index => 
+      `assets/ezgif-58268a66386d7d20-jpg/ezgif-frame-${index.toString().padStart(3, '0')}.jpg`;
+
     // Draw image like background-size: cover
     function drawImageCover(ctx, img) {
+      if (!img || !img.complete || img.naturalWidth === 0) return;
       const canvas = ctx.canvas;
       const imgWidth = img.naturalWidth || img.width;
       const imgHeight = img.naturalHeight || img.height;
+      if (!imgWidth || !imgHeight) return;
       
       const canvasRatio = canvas.width / canvas.height;
       const imgRatio = imgWidth / imgHeight;
@@ -264,9 +254,44 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     function renderFrame(index) {
-      if (images[index] && loadedCount > 0) {
+      if (loadedFlags[index]) {
         drawImageCover(ctx, images[index]);
+        return;
       }
+      // Find nearest loaded frame if current target isn't ready yet
+      for (let offset = 1; offset < frameCount; offset++) {
+        if (index - offset >= 0 && loadedFlags[index - offset]) {
+          drawImageCover(ctx, images[index - offset]);
+          return;
+        }
+        if (index + offset < frameCount && loadedFlags[index + offset]) {
+          drawImageCover(ctx, images[index + offset]);
+          return;
+        }
+      }
+    }
+    
+    // Preload images with fallbacks
+    for (let i = 1; i <= frameCount; i++) {
+      const idx = i - 1;
+      const img = new Image();
+      
+      img.onload = () => {
+        loadedFlags[idx] = true;
+        if (idx === currentFrameIndex || idx === 0) {
+          requestAnimationFrame(() => renderFrame(currentFrameIndex));
+        }
+      };
+      
+      img.onerror = () => {
+        // Fallback to assets directory path if root directory load fails
+        if (img.src.indexOf('assets/') === -1) {
+          img.src = getFallbackPath(i);
+        }
+      };
+      
+      img.src = getPrimaryPath(i);
+      images.push(img);
     }
     
     // Canvas sizing
@@ -299,10 +324,8 @@ document.addEventListener('DOMContentLoaded', () => {
         Math.floor(scrollFraction * frameCount)
       );
       
-      if (frameIndex !== currentFrameIndex) {
-        currentFrameIndex = frameIndex;
-        renderFrame(currentFrameIndex);
-      }
+      currentFrameIndex = frameIndex;
+      renderFrame(currentFrameIndex);
     }
     
     window.addEventListener('scroll', () => {
@@ -313,7 +336,11 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         ticking = true;
       }
-    });
+    }, { passive: true });
+
+    // Initial render
+    setTimeout(updateSequence, 100);
+    setTimeout(updateSequence, 500);
   }
 
 });
