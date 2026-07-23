@@ -240,16 +240,10 @@ button { font-family: inherit; cursor: pointer; border: none; }
   align-items: center;
   gap: 8px;
 }
-.nav-logo-img {
-  width: 32px;
-  height: 32px;
+.nav-logo-icon {
+  width: 28px;
+  height: 28px;
   object-fit: contain;
-  display: block;
-  flex-shrink: 0;
-  transition: var(--transition);
-}
-.nav-logo:hover .nav-logo-img {
-  transform: scale(1.05);
 }
 .nav-logo .accent { color: var(--accent-light); }
 .nav-links {
@@ -486,21 +480,12 @@ button { font-family: inherit; cursor: pointer; border: none; }
 .mockup-dots span:nth-child(3) { background: #22C55E; }
 .mockup-url {
   flex: 1;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
+  text-align: center;
   font-size: 0.72rem;
   color: var(--text-dim);
   background: rgba(255,255,255,0.04);
   padding: 6px 16px;
   border-radius: 8px;
-}
-.mockup-url-icon {
-  width: 14px;
-  height: 14px;
-  object-fit: contain;
-  flex-shrink: 0;
 }
 .mockup-screen {
   padding: 28px;
