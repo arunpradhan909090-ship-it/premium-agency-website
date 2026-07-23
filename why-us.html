@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -17,11 +17,11 @@
 </head>
 <body>
 
-  <!-- â•â•â•â•â•â•â•â•â•â•â• NAVBAR â•â•â•â•â•â•â•â•â•â•â• -->
+  <!-- ═══════════ NAVBAR ═══════════ -->
   <nav class="navbar" id="navbar">
     <div class="container">
       <a href="index.html" class="nav-logo">
-        <img src="assets/favicon.png" alt="ELEZEX Logo" class="nav-logo-icon">
+        <img src="favicon.png" alt="ELEZEX Logo" class="nav-logo-icon" onerror="if(this.src.indexOf('assets')===-1){this.src='assets/favicon.png';}">
         <span>ELE<span class="accent">ZEX</span></span>
       </a>
       <ul class="nav-links">
@@ -44,7 +44,7 @@
 
   <!-- Mobile Menu -->
   <div class="mobile-menu" id="mobile-menu">
-    <button class="mobile-close" aria-label="Close menu">âœ•</button>
+    <button class="mobile-close" aria-label="Close menu">✕</button>
     <a href="index.html">Home</a>
     <a href="services.html">Services</a>
     <a href="why-us.html">Why Us</a>
@@ -55,7 +55,7 @@
     <a href="javascript:void(0)" class="btn btn-primary btn-trigger-modal" style="margin-top:16px;">Get Free Website Demo</a>
   </div>
 
-  <!-- â•â•â•â•â•â•â•â•â•â•â• PAGE HEADER â•â•â•â•â•â•â•â•â•â•â• -->
+  <!-- ═══════════ PAGE HEADER ═══════════ -->
   <section class="hero" style="min-height: 45vh; padding-top: 140px; padding-bottom: 60px;">
     <div class="container" style="display: block; text-align: center;">
       <span class="section-label">Why Us</span>
@@ -64,122 +64,60 @@
     </div>
   </section>
 
-  <!-- â•â•â•â•â•â•â•â•â•â•â• WHY CHOOSE SECTION â•â•â•â•â•â•â•â•â•â•â• -->
+  <!-- ═══════════ WHY CHOOSE SECTION ═══════════ -->
   <section class="why-choose section-light" id="why-choose" style="padding: 60px 0 100px;">
     <div class="container">
       <div class="why-grid">
-        <!-- 1. Premium Websites -->
-        <div class="why-card glass-card reveal stagger-1">
-          <div class="why-card-img-wrapper">
-            <img src="assets/why_premium_web.png" alt="Premium Websites" class="why-card-img">
-          </div>
-          <div class="why-card-body">
-            <div class="why-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
-            <h4>Premium Websites</h4>
-            <p>Designs that look like they cost â‚¹1 lakh+</p>
-          </div>
+        <div class="why-card glass-card reveal stagger-1 card-premium">
+          <div class="why-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
+          <h4>Premium Websites</h4>
+          <p>Designs that look like they cost ₹1 lakh+</p>
         </div>
-
-        <!-- 2. Fast Delivery -->
-        <div class="why-card glass-card reveal stagger-2">
-          <div class="why-card-img-wrapper">
-            <img src="assets/why_fast_delivery.png" alt="Fast Delivery" class="why-card-img">
-          </div>
-          <div class="why-card-body">
-            <div class="why-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
-            <h4>Fast Delivery</h4>
-            <p>Your website ready in 24â€“48 hours</p>
-          </div>
+        <div class="why-card glass-card reveal stagger-2 card-fast">
+          <div class="why-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+          <h4>Fast Delivery</h4>
+          <p>Your website ready in 24–48 hours</p>
         </div>
-
-        <!-- 3. Modern UI -->
-        <div class="why-card glass-card reveal stagger-3">
-          <div class="why-card-img-wrapper">
-            <img src="assets/why_modern_ui.png" alt="Modern UI" class="why-card-img">
-          </div>
-          <div class="why-card-body">
-            <div class="why-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div>
-            <h4>Modern UI</h4>
-            <p>Clean, contemporary designs that impress</p>
-          </div>
+        <div class="why-card glass-card reveal stagger-3 card-ui">
+          <div class="why-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div>
+          <h4>Modern UI</h4>
+          <p>Clean, contemporary designs that impress</p>
         </div>
-
-        <!-- 4. SEO Optimized -->
-        <div class="why-card glass-card reveal stagger-1">
-          <div class="why-card-img-wrapper">
-            <img src="assets/why_seo.png" alt="SEO Optimized" class="why-card-img">
-          </div>
-          <div class="why-card-body">
-            <div class="why-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div>
-            <h4>SEO Optimized</h4>
-            <p>Built for Google ranking from day one</p>
-          </div>
+        <div class="why-card glass-card reveal stagger-1 card-seo">
+          <div class="why-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div>
+          <h4>SEO Optimized</h4>
+          <p>Built for Google ranking from day one</p>
         </div>
-
-        <!-- 5. Mobile First -->
-        <div class="why-card glass-card reveal stagger-2">
-          <div class="why-card-img-wrapper">
-            <img src="assets/why_mobile.png" alt="Mobile First" class="why-card-img">
-          </div>
-          <div class="why-card-body">
-            <div class="why-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg></div>
-            <h4>Mobile First</h4>
-            <p>Flawless experience on every device</p>
-          </div>
+        <div class="why-card glass-card reveal stagger-2 card-mobile">
+          <div class="why-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg></div>
+          <h4>Mobile First</h4>
+          <p>Flawless experience on every device</p>
         </div>
-
-        <!-- 6. Affordable Pricing -->
-        <div class="why-card glass-card reveal stagger-3">
-          <div class="why-card-img-wrapper">
-            <img src="assets/why_price.png" alt="Affordable Pricing" class="why-card-img">
-          </div>
-          <div class="why-card-body">
-            <div class="why-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></div>
-            <h4>Affordable Pricing</h4>
-            <p>Premium quality without the premium price</p>
-          </div>
+        <div class="why-card glass-card reveal stagger-3 card-price">
+          <div class="why-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></div>
+          <h4>Affordable Pricing</h4>
+          <p>Premium quality without the premium price</p>
         </div>
-
-        <!-- 7. Dedicated Support -->
-        <div class="why-card glass-card reveal stagger-1">
-          <div class="why-card-img-wrapper">
-            <img src="assets/why_support.png" alt="Dedicated Support" class="why-card-img">
-          </div>
-          <div class="why-card-body">
-            <div class="why-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg></div>
-            <h4>Dedicated Support</h4>
-            <p>Direct access to your design team</p>
-          </div>
+        <div class="why-card glass-card reveal stagger-1 card-support">
+          <div class="why-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg></div>
+          <h4>Dedicated Support</h4>
+          <p>Direct access to your design team</p>
         </div>
-
-        <!-- 8. Maintenance Included -->
-        <div class="why-card glass-card reveal stagger-2">
-          <div class="why-card-img-wrapper">
-            <img src="assets/why_maintenance.png" alt="Maintenance Included" class="why-card-img">
-          </div>
-          <div class="why-card-body">
-            <div class="why-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
-            <h4>Maintenance Included</h4>
-            <p>We handle updates, security & backups</p>
-          </div>
+        <div class="why-card glass-card reveal stagger-2 card-maintenance">
+          <div class="why-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+          <h4>Maintenance Included</h4>
+          <p>We handle updates, security & backups</p>
         </div>
-
-        <!-- 9. Google Ranking Ready -->
-        <div class="why-card glass-card reveal stagger-3">
-          <div class="why-card-img-wrapper">
-            <img src="assets/why_ranking.png" alt="Google Ranking Ready" class="why-card-img">
-          </div>
-          <div class="why-card-body">
-            <div class="why-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg></div>
-            <h4>Google Ranking Ready</h4>
-            <p>Technical SEO baked into every page</p>
-          </div>
+        <div class="why-card glass-card reveal stagger-3 card-ranking">
+          <div class="why-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg></div>
+          <h4>Google Ranking Ready</h4>
+          <p>Technical SEO baked into every page</p>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- â•â•â•â•â•â•â•â•â•â•â• FOOTER â•â•â•â•â•â•â•â•â•â•â• -->
+  <!-- ═══════════ FOOTER ═══════════ -->
   <footer class="footer">
     <div class="container">
       <div class="footer-grid">
@@ -209,7 +147,7 @@
         </div>
       </div>
       <div class="footer-bottom">
-        <p>Â© 2026 ELEZEX. All rights reserved.</p>
+        <p>© 2026 ELEZEX. All rights reserved.</p>
       </div>
     </div>
   </footer>
@@ -258,5 +196,3 @@
   <script src="script.js"></script>
 </body>
 </html>
-
-

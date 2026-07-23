@@ -5,17 +5,14 @@ document.addEventListener('DOMContentLoaded', () => {
   // ── Navbar scroll behavior ──
   const navbar = document.querySelector('.navbar');
   const navLinks = document.querySelectorAll('.nav-links a');
+  const sections = document.querySelectorAll('section[id]');
 
-  const updateNavbarState = () => {
-    if (window.scrollY > 50) {
-      navbar?.classList.add('scrolled');
+  const handleScroll = () => {
+    if (window.scrollY > 60) {
+      navbar.classList.add('scrolled');
     } else {
-      navbar?.classList.remove('scrolled');
+      navbar.classList.remove('scrolled');
     }
-  };
-
-  window.addEventListener('scroll', updateNavbarState, { passive: true });
-  updateNavbarState();
 
   // Active nav link highlighting based on current HTML file page
   const currentPath = window.location.pathname.split('/').pop() || 'index.html';
@@ -26,7 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // ── Smooth scroll for in-page anchor links ──
+  // ── Smooth scroll only for in-page anchor links ──
   document.querySelectorAll('a[href^="#"]').forEach(link => {
     link.addEventListener('click', (e) => {
       const href = link.getAttribute('href');
@@ -50,51 +47,31 @@ document.addEventListener('DOMContentLoaded', () => {
   const mobileClose = document.querySelector('.mobile-close');
 
   mobileToggle?.addEventListener('click', () => {
-    mobileMenu?.classList.add('open');
+    mobileMenu.classList.add('open');
     document.body.style.overflow = 'hidden';
   });
 
   mobileClose?.addEventListener('click', () => {
-    mobileMenu?.classList.remove('open');
+    mobileMenu.classList.remove('open');
     document.body.style.overflow = '';
   });
 
-  // ── Scroll Reveal Animations ──
+  // ── Scroll reveal animations ──
   const revealElements = document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-scale');
 
-  const checkRevealOnScroll = () => {
-    const windowHeight = window.innerHeight;
-    revealElements.forEach(el => {
-      if (el.classList.contains('visible')) return;
-      const rect = el.getBoundingClientRect();
-      if (rect.top <= windowHeight * 0.88 && rect.bottom >= 0) {
-        el.classList.add('visible');
+  const revealObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        revealObserver.unobserve(entry.target);
       }
     });
-  };
+  }, {
+    threshold: 0.12,
+    rootMargin: '0px 0px -40px 0px'
+  });
 
-  // IntersectionObserver for smooth GPU-accelerated reveals
-  if ('IntersectionObserver' in window) {
-    const revealObserver = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('visible');
-          revealObserver.unobserve(entry.target);
-        }
-      });
-    }, {
-      threshold: 0.1,
-      rootMargin: '0px 0px -30px 0px'
-    });
-
-    revealElements.forEach(el => revealObserver.observe(el));
-  }
-
-  // Window scroll listener & initial trigger to ensure elements reveal instantly
-  window.addEventListener('scroll', checkRevealOnScroll, { passive: true });
-  checkRevealOnScroll();
-  setTimeout(checkRevealOnScroll, 100);
-  setTimeout(checkRevealOnScroll, 500);
+  revealElements.forEach(el => revealObserver.observe(el));
 
   // ── Counter animation ──
   const counters = document.querySelectorAll('[data-count]');
@@ -133,7 +110,7 @@ document.addEventListener('DOMContentLoaded', () => {
         counterObserver.unobserve(el);
       }
     });
-  }, { threshold: 0.3 });
+  }, { threshold: 0.5 });
 
   counters.forEach(el => counterObserver.observe(el));
 
@@ -145,18 +122,17 @@ document.addEventListener('DOMContentLoaded', () => {
     const answer = item.querySelector('.faq-answer');
     const inner = item.querySelector('.faq-answer-inner');
 
-    question?.addEventListener('click', () => {
+    question.addEventListener('click', () => {
       const isOpen = item.classList.contains('open');
 
       // Close all
       faqItems.forEach(i => {
         i.classList.remove('open');
-        const a = i.querySelector('.faq-answer');
-        if (a) a.style.maxHeight = '0';
+        i.querySelector('.faq-answer').style.maxHeight = '0';
       });
 
       // Open clicked if was closed
-      if (!isOpen && answer && inner) {
+      if (!isOpen) {
         item.classList.add('open');
         answer.style.maxHeight = inner.scrollHeight + 'px';
       }
@@ -177,6 +153,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   ctaButtons.forEach(btn => {
     btn.addEventListener('click', (e) => {
+      // Prevent default jump behavior, mailto triggers, or page scrolling
       e.preventDefault();
       e.stopPropagation();
       
@@ -193,10 +170,8 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   const closeModal = () => {
-    if (modal) {
-      modal.classList.remove('active');
-      document.body.style.overflow = ''; // Unlock scrolling
-    }
+    modal.classList.remove('active');
+    document.body.style.overflow = ''; // Unlock scrolling
   };
 
   closeBtn?.addEventListener('click', closeModal);
@@ -214,14 +189,15 @@ document.addEventListener('DOMContentLoaded', () => {
     e.preventDefault();
     
     // Simulate submission flow
-    if (contactForm) contactForm.style.display = 'none';
-    if (successScreen) successScreen.style.display = 'flex';
+    contactForm.style.display = 'none';
+    successScreen.style.display = 'flex';
   });
 
   // ── Ensure Hero Background Video plays programmatically ──
   const bgVideo = document.querySelector('.hero-bg-video');
   if (bgVideo) {
     bgVideo.play().catch(() => {
+      // Play on first user interaction if autoplay is blocked
       const playVideo = () => {
         bgVideo.play();
         document.removeEventListener('click', playVideo);
@@ -229,6 +205,114 @@ document.addEventListener('DOMContentLoaded', () => {
       };
       document.addEventListener('click', playVideo);
       document.addEventListener('touchstart', playVideo);
+    });
+  }
+
+  // ── Scroll-Triggered Parallax Image Sequence Animation ──
+  const sequenceContainer = document.getElementById('scroll-sequence-sec');
+  const canvas = document.getElementById('sequence-canvas');
+  
+  if (sequenceContainer && canvas) {
+    const ctx = canvas.getContext('2d');
+    const frameCount = 40;
+    const images = [];
+    let loadedCount = 0;
+    let currentFrameIndex = 0;
+    
+    // Path generator
+    const getFramePath = index => 
+      `ezgif-58268a66386d7d20-jpg/ezgif-frame-${index.toString().padStart(3, '0')}.jpg`;
+      
+    // Preload images
+    for (let i = 1; i <= frameCount; i++) {
+      const img = new Image();
+      img.src = getFramePath(i);
+      img.onload = () => {
+        loadedCount++;
+        if (loadedCount === frameCount) {
+          // Initial draw when all images loaded
+          requestAnimationFrame(() => renderFrame(0));
+        }
+      };
+      images.push(img);
+    }
+    
+    // Draw image like background-size: cover
+    function drawImageCover(ctx, img) {
+      const canvas = ctx.canvas;
+      const imgWidth = img.naturalWidth || img.width;
+      const imgHeight = img.naturalHeight || img.height;
+      
+      const canvasRatio = canvas.width / canvas.height;
+      const imgRatio = imgWidth / imgHeight;
+      
+      let sWidth = imgWidth;
+      let sHeight = imgHeight;
+      let sx = 0;
+      let sy = 0;
+      
+      if (canvasRatio > imgRatio) {
+        sHeight = imgWidth / canvasRatio;
+        sy = (imgHeight - sHeight) / 2;
+      } else {
+        sWidth = imgHeight * canvasRatio;
+        sx = (imgWidth - sWidth) / 2;
+      }
+      
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(img, sx, sy, sWidth, sHeight, 0, 0, canvas.width, canvas.height);
+    }
+    
+    function renderFrame(index) {
+      if (images[index] && loadedCount > 0) {
+        drawImageCover(ctx, images[index]);
+      }
+    }
+    
+    // Canvas sizing
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      renderFrame(currentFrameIndex);
+    }
+    
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas(); // initial size
+    
+    // Scroll progress handler
+    let ticking = false;
+    function updateSequence() {
+      const rect = sequenceContainer.getBoundingClientRect();
+      const scrollRange = rect.height - window.innerHeight;
+      
+      let scrollFraction = 0;
+      if (rect.top <= 0) {
+        scrollFraction = -rect.top / scrollRange;
+      }
+      
+      // Bound it between 0 and 1
+      scrollFraction = Math.min(1, Math.max(0, scrollFraction));
+      
+      // Map progress to frame index
+      const frameIndex = Math.min(
+        frameCount - 1,
+        Math.floor(scrollFraction * frameCount)
+      );
+      
+      if (frameIndex !== currentFrameIndex) {
+        currentFrameIndex = frameIndex;
+        renderFrame(currentFrameIndex);
+      }
+    }
+    
+    window.addEventListener('scroll', () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          updateSequence();
+          ticking = false;
+        });
+        ticking = true;
+      }
     });
   }
 
