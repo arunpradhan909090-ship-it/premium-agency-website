@@ -38,6 +38,12 @@ document.addEventListener('DOMContentLoaded', () => {
     link.addEventListener('click', (e) => {
       const href = link.getAttribute('href');
       if (href === '#') return;
+      
+      // Do not perform scroll if link is a modal popup trigger or contact demo button
+      if (link.matches('.btn-primary, .cta-btn, .nav-cta a') || href === '#contact') {
+        return;
+      }
+
       e.preventDefault();
       const target = document.querySelector(href);
       if (target) {
@@ -57,12 +63,12 @@ document.addEventListener('DOMContentLoaded', () => {
   const mobileClose = document.querySelector('.mobile-close');
 
   mobileToggle?.addEventListener('click', () => {
-    mobileMenu.classList.add('open');
+    mobileMenu?.classList.add('open');
     document.body.style.overflow = 'hidden';
   });
 
   mobileClose?.addEventListener('click', () => {
-    mobileMenu.classList.remove('open');
+    mobileMenu?.classList.remove('open');
     document.body.style.overflow = '';
   });
 
@@ -132,7 +138,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const answer = item.querySelector('.faq-answer');
     const inner = item.querySelector('.faq-answer-inner');
 
-    question.addEventListener('click', () => {
+    question?.addEventListener('click', () => {
       const isOpen = item.classList.contains('open');
 
       // Close all
@@ -158,20 +164,26 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Select all primary CTA triggers on the page
   const ctaButtons = document.querySelectorAll(
-    '.btn-primary:not(.submit-btn), .cta-btn'
+    '.btn-primary:not(.submit-btn), .cta-btn, .nav-cta a, a[href="#contact"]'
   );
 
   ctaButtons.forEach(btn => {
     btn.addEventListener('click', (e) => {
-      // Prevent default jump behavior or mailto triggers
+      // Prevent default scroll or jump behavior
       e.preventDefault();
-      modal.classList.add('active');
-      document.body.style.overflow = 'hidden'; // Lock scrolling
-      
-      // Reset form states
-      contactForm.style.display = 'flex';
-      successScreen.style.display = 'none';
-      contactForm.reset();
+      e.stopPropagation();
+      if (modal) {
+        modal.classList.add('active');
+        document.body.style.overflow = 'hidden'; // Lock scrolling in place
+        
+        // Reset form states
+        if (contactForm) contactForm.style.display = 'flex';
+        if (successScreen) successScreen.style.display = 'none';
+        if (contactForm) contactForm.reset();
+      }
+
+      // Close mobile menu if open
+      mobileMenu?.classList.remove('open');
     });
   });
 
@@ -211,6 +223,114 @@ document.addEventListener('DOMContentLoaded', () => {
       };
       document.addEventListener('click', playVideo);
       document.addEventListener('touchstart', playVideo);
+    });
+  }
+
+  // ── Scroll-Triggered Parallax Image Sequence Animation ──
+  const sequenceContainer = document.getElementById('scroll-sequence-sec');
+  const canvas = document.getElementById('sequence-canvas');
+  
+  if (sequenceContainer && canvas) {
+    const ctx = canvas.getContext('2d');
+    const frameCount = 40;
+    const images = [];
+    let loadedCount = 0;
+    let currentFrameIndex = 0;
+    
+    // Path generator
+    const getFramePath = index => 
+      `ezgif-58268a66386d7d20-jpg/ezgif-frame-${index.toString().padStart(3, '0')}.jpg`;
+      
+    // Preload images
+    for (let i = 1; i <= frameCount; i++) {
+      const img = new Image();
+      img.src = getFramePath(i);
+      img.onload = () => {
+        loadedCount++;
+        if (loadedCount === frameCount) {
+          // Initial draw when all images loaded
+          requestAnimationFrame(() => renderFrame(0));
+        }
+      };
+      images.push(img);
+    }
+    
+    // Draw image like background-size: cover
+    function drawImageCover(ctx, img) {
+      const canvas = ctx.canvas;
+      const imgWidth = img.naturalWidth || img.width;
+      const imgHeight = img.naturalHeight || img.height;
+      
+      const canvasRatio = canvas.width / canvas.height;
+      const imgRatio = imgWidth / imgHeight;
+      
+      let sWidth = imgWidth;
+      let sHeight = imgHeight;
+      let sx = 0;
+      let sy = 0;
+      
+      if (canvasRatio > imgRatio) {
+        sHeight = imgWidth / canvasRatio;
+        sy = (imgHeight - sHeight) / 2;
+      } else {
+        sWidth = imgHeight * canvasRatio;
+        sx = (imgWidth - sWidth) / 2;
+      }
+      
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(img, sx, sy, sWidth, sHeight, 0, 0, canvas.width, canvas.height);
+    }
+    
+    function renderFrame(index) {
+      if (images[index] && loadedCount > 0) {
+        drawImageCover(ctx, images[index]);
+      }
+    }
+    
+    // Canvas sizing
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      renderFrame(currentFrameIndex);
+    }
+    
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas(); // initial size
+    
+    // Scroll progress handler
+    let ticking = false;
+    function updateSequence() {
+      const rect = sequenceContainer.getBoundingClientRect();
+      const scrollRange = rect.height - window.innerHeight;
+      
+      let scrollFraction = 0;
+      if (rect.top <= 0) {
+        scrollFraction = -rect.top / scrollRange;
+      }
+      
+      // Bound it between 0 and 1
+      scrollFraction = Math.min(1, Math.max(0, scrollFraction));
+      
+      // Map progress to frame index
+      const frameIndex = Math.min(
+        frameCount - 1,
+        Math.floor(scrollFraction * frameCount)
+      );
+      
+      if (frameIndex !== currentFrameIndex) {
+        currentFrameIndex = frameIndex;
+        renderFrame(currentFrameIndex);
+      }
+    }
+    
+    window.addEventListener('scroll', () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          updateSequence();
+          ticking = false;
+        });
+        ticking = true;
+      }
     });
   }
 
