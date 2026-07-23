@@ -5,14 +5,17 @@ document.addEventListener('DOMContentLoaded', () => {
   // ── Navbar scroll behavior ──
   const navbar = document.querySelector('.navbar');
   const navLinks = document.querySelectorAll('.nav-links a');
-  const sections = document.querySelectorAll('section[id]');
 
-  const handleScroll = () => {
-    if (window.scrollY > 60) {
-      navbar.classList.add('scrolled');
+  const updateNavbarState = () => {
+    if (window.scrollY > 50) {
+      navbar?.classList.add('scrolled');
     } else {
-      navbar.classList.remove('scrolled');
+      navbar?.classList.remove('scrolled');
     }
+  };
+
+  window.addEventListener('scroll', updateNavbarState, { passive: true });
+  updateNavbarState();
 
   // Active nav link highlighting based on current HTML file page
   const currentPath = window.location.pathname.split('/').pop() || 'index.html';
@@ -23,7 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // ── Smooth scroll only for in-page anchor links ──
+  // ── Smooth scroll for in-page anchor links ──
   document.querySelectorAll('a[href^="#"]').forEach(link => {
     link.addEventListener('click', (e) => {
       const href = link.getAttribute('href');
@@ -47,31 +50,51 @@ document.addEventListener('DOMContentLoaded', () => {
   const mobileClose = document.querySelector('.mobile-close');
 
   mobileToggle?.addEventListener('click', () => {
-    mobileMenu.classList.add('open');
+    mobileMenu?.classList.add('open');
     document.body.style.overflow = 'hidden';
   });
 
   mobileClose?.addEventListener('click', () => {
-    mobileMenu.classList.remove('open');
+    mobileMenu?.classList.remove('open');
     document.body.style.overflow = '';
   });
 
-  // ── Scroll reveal animations ──
+  // ── Scroll Reveal Animations ──
   const revealElements = document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-scale');
 
-  const revealObserver = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('visible');
-        revealObserver.unobserve(entry.target);
+  const checkRevealOnScroll = () => {
+    const windowHeight = window.innerHeight;
+    revealElements.forEach(el => {
+      if (el.classList.contains('visible')) return;
+      const rect = el.getBoundingClientRect();
+      if (rect.top <= windowHeight * 0.88 && rect.bottom >= 0) {
+        el.classList.add('visible');
       }
     });
-  }, {
-    threshold: 0.12,
-    rootMargin: '0px 0px -40px 0px'
-  });
+  };
 
-  revealElements.forEach(el => revealObserver.observe(el));
+  // IntersectionObserver for smooth GPU-accelerated reveals
+  if ('IntersectionObserver' in window) {
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          revealObserver.unobserve(entry.target);
+        }
+      });
+    }, {
+      threshold: 0.1,
+      rootMargin: '0px 0px -30px 0px'
+    });
+
+    revealElements.forEach(el => revealObserver.observe(el));
+  }
+
+  // Window scroll listener & initial trigger to ensure elements reveal instantly
+  window.addEventListener('scroll', checkRevealOnScroll, { passive: true });
+  checkRevealOnScroll();
+  setTimeout(checkRevealOnScroll, 100);
+  setTimeout(checkRevealOnScroll, 500);
 
   // ── Counter animation ──
   const counters = document.querySelectorAll('[data-count]');
@@ -110,7 +133,7 @@ document.addEventListener('DOMContentLoaded', () => {
         counterObserver.unobserve(el);
       }
     });
-  }, { threshold: 0.5 });
+  }, { threshold: 0.3 });
 
   counters.forEach(el => counterObserver.observe(el));
 
@@ -122,17 +145,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const answer = item.querySelector('.faq-answer');
     const inner = item.querySelector('.faq-answer-inner');
 
-    question.addEventListener('click', () => {
+    question?.addEventListener('click', () => {
       const isOpen = item.classList.contains('open');
 
       // Close all
       faqItems.forEach(i => {
         i.classList.remove('open');
-        i.querySelector('.faq-answer').style.maxHeight = '0';
+        const a = i.querySelector('.faq-answer');
+        if (a) a.style.maxHeight = '0';
       });
 
       // Open clicked if was closed
-      if (!isOpen) {
+      if (!isOpen && answer && inner) {
         item.classList.add('open');
         answer.style.maxHeight = inner.scrollHeight + 'px';
       }
@@ -153,7 +177,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   ctaButtons.forEach(btn => {
     btn.addEventListener('click', (e) => {
-      // Prevent default jump behavior, mailto triggers, or page scrolling
       e.preventDefault();
       e.stopPropagation();
       
@@ -170,8 +193,10 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   const closeModal = () => {
-    modal.classList.remove('active');
-    document.body.style.overflow = ''; // Unlock scrolling
+    if (modal) {
+      modal.classList.remove('active');
+      document.body.style.overflow = ''; // Unlock scrolling
+    }
   };
 
   closeBtn?.addEventListener('click', closeModal);
@@ -189,15 +214,14 @@ document.addEventListener('DOMContentLoaded', () => {
     e.preventDefault();
     
     // Simulate submission flow
-    contactForm.style.display = 'none';
-    successScreen.style.display = 'flex';
+    if (contactForm) contactForm.style.display = 'none';
+    if (successScreen) successScreen.style.display = 'flex';
   });
 
   // ── Ensure Hero Background Video plays programmatically ──
   const bgVideo = document.querySelector('.hero-bg-video');
   if (bgVideo) {
     bgVideo.play().catch(() => {
-      // Play on first user interaction if autoplay is blocked
       const playVideo = () => {
         bgVideo.play();
         document.removeEventListener('click', playVideo);
@@ -206,150 +230,6 @@ document.addEventListener('DOMContentLoaded', () => {
       document.addEventListener('click', playVideo);
       document.addEventListener('touchstart', playVideo);
     });
-  }
-
-  // ── Scroll-Triggered Parallax Image Sequence Animation ──
-  const sequenceContainer = document.getElementById('scroll-sequence-sec');
-  const canvas = document.getElementById('sequence-canvas');
-  
-  if (sequenceContainer && canvas) {
-    const ctx = canvas.getContext('2d');
-    const frameCount = 40;
-    const images = [];
-    const loadedFlags = new Array(frameCount).fill(false);
-    let currentFrameIndex = 0;
-    let anyFrameLoaded = false;
-    
-    // Candidate path generators to support any folder structure on GitHub/Hostinger
-    const candidatePathFns = [
-      idx => `ezgif-58268a66386d7d20-jpg/ezgif-frame-${idx.toString().padStart(3, '0')}.jpg`,
-      idx => `assets/ezgif-58268a66386d7d20-jpg/ezgif-frame-${idx.toString().padStart(3, '0')}.jpg`,
-      idx => `assets/ezgif-frame-${idx.toString().padStart(3, '0')}.jpg`,
-      idx => `ezgif-frame-${idx.toString().padStart(3, '0')}.jpg`
-    ];
-
-    // Draw image stretched to cover canvas cleanly
-    function drawImageCover(ctx, img) {
-      if (!img || !img.complete || !img.naturalWidth) return;
-      const cvs = ctx.canvas;
-      if (!cvs.width || !cvs.height) return;
-      
-      const imgWidth = img.naturalWidth;
-      const imgHeight = img.naturalHeight;
-      const canvasRatio = cvs.width / cvs.height;
-      const imgRatio = imgWidth / imgHeight;
-      
-      let sWidth = imgWidth;
-      let sHeight = imgHeight;
-      let sx = 0;
-      let sy = 0;
-      
-      if (canvasRatio > imgRatio) {
-        sHeight = imgWidth / canvasRatio;
-        sy = (imgHeight - sHeight) / 2;
-      } else {
-        sWidth = imgHeight * canvasRatio;
-        sx = (imgWidth - sWidth) / 2;
-      }
-      
-      ctx.clearRect(0, 0, cvs.width, cvs.height);
-      ctx.drawImage(img, sx, sy, sWidth, sHeight, 0, 0, cvs.width, cvs.height);
-    }
-    
-    function renderFrame(index) {
-      if (loadedFlags[index]) {
-        drawImageCover(ctx, images[index]);
-        return;
-      }
-      // Find nearest loaded frame if target frame isn't ready
-      for (let offset = 1; offset < frameCount; offset++) {
-        if (index - offset >= 0 && loadedFlags[index - offset]) {
-          drawImageCover(ctx, images[index - offset]);
-          return;
-        }
-        if (index + offset < frameCount && loadedFlags[index + offset]) {
-          drawImageCover(ctx, images[index + offset]);
-          return;
-        }
-      }
-    }
-    
-    function tryLoadImage(img, frameNumber, pathAttemptIndex) {
-      if (pathAttemptIndex >= candidatePathFns.length) return;
-      img.src = candidatePathFns[pathAttemptIndex](frameNumber);
-    }
-
-    // Preload all 40 frames
-    for (let i = 1; i <= frameCount; i++) {
-      const idx = i - 1;
-      const img = new Image();
-      let pathAttempt = 0;
-      
-      img.onload = () => {
-        loadedFlags[idx] = true;
-        if (!anyFrameLoaded) {
-          anyFrameLoaded = true;
-          sequenceContainer.style.display = 'block'; // Reveal sequence section once frames load
-          resizeCanvas();
-        }
-        if (idx === currentFrameIndex || idx === 0) {
-          requestAnimationFrame(() => renderFrame(currentFrameIndex));
-        }
-      };
-      
-      img.onerror = () => {
-        pathAttempt++;
-        if (pathAttempt < candidatePathFns.length) {
-          tryLoadImage(img, i, pathAttempt);
-        }
-      };
-      
-      tryLoadImage(img, i, pathAttempt);
-      images.push(img);
-    }
-    
-    // Canvas sizing
-    function resizeCanvas() {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-      renderFrame(currentFrameIndex);
-    }
-    
-    window.addEventListener('resize', resizeCanvas);
-    
-    // Scroll progress handler
-    let ticking = false;
-    function updateSequence() {
-      if (sequenceContainer.style.display === 'none') return;
-      const rect = sequenceContainer.getBoundingClientRect();
-      const scrollRange = rect.height - window.innerHeight;
-      
-      let scrollFraction = 0;
-      if (rect.top <= 0) {
-        scrollFraction = -rect.top / (scrollRange > 0 ? scrollRange : 1);
-      }
-      
-      scrollFraction = Math.min(1, Math.max(0, scrollFraction));
-      const frameIndex = Math.min(
-        frameCount - 1,
-        Math.floor(scrollFraction * frameCount)
-      );
-      
-      currentFrameIndex = frameIndex;
-      renderFrame(currentFrameIndex);
-    }
-    
-    window.addEventListener('scroll', () => {
-      if (!ticking) {
-        window.requestAnimationFrame(() => {
-          updateSequence();
-          ticking = false;
-        });
-        ticking = true;
-      }
-    }, { passive: true });
-
-    setTimeout(updateSequence, 200);
   }
 
 });
