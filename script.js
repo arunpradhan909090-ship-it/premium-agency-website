@@ -14,36 +14,20 @@ document.addEventListener('DOMContentLoaded', () => {
       navbar.classList.remove('scrolled');
     }
 
-    // Active nav link
-    let current = '';
-    sections.forEach(section => {
-      const top = section.offsetTop - 120;
-      if (window.scrollY >= top) {
-        current = section.getAttribute('id');
-      }
-    });
-    navLinks.forEach(link => {
-      link.classList.remove('active');
-      if (link.getAttribute('href') === `#${current}`) {
-        link.classList.add('active');
-      }
-    });
-  };
+  // Active nav link highlighting based on current HTML file page
+  const currentPath = window.location.pathname.split('/').pop() || 'index.html';
+  navLinks.forEach(link => {
+    const href = link.getAttribute('href');
+    if (href === currentPath || (currentPath === '' && href === 'index.html')) {
+      link.classList.add('active');
+    }
+  });
 
-  window.addEventListener('scroll', handleScroll, { passive: true });
-  handleScroll();
-
-  // ── Smooth scroll for nav links ──
+  // ── Smooth scroll only for in-page anchor links ──
   document.querySelectorAll('a[href^="#"]').forEach(link => {
     link.addEventListener('click', (e) => {
       const href = link.getAttribute('href');
-      if (href === '#') return;
-      
-      // Do not perform scroll if link is a modal popup trigger or contact demo button
-      if (link.matches('.btn-primary, .cta-btn, .nav-cta a') || href === '#contact') {
-        return;
-      }
-
+      if (href === '#' || href === '') return;
       e.preventDefault();
       const target = document.querySelector(href);
       if (target) {
@@ -63,12 +47,12 @@ document.addEventListener('DOMContentLoaded', () => {
   const mobileClose = document.querySelector('.mobile-close');
 
   mobileToggle?.addEventListener('click', () => {
-    mobileMenu?.classList.add('open');
+    mobileMenu.classList.add('open');
     document.body.style.overflow = 'hidden';
   });
 
   mobileClose?.addEventListener('click', () => {
-    mobileMenu?.classList.remove('open');
+    mobileMenu.classList.remove('open');
     document.body.style.overflow = '';
   });
 
@@ -138,7 +122,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const answer = item.querySelector('.faq-answer');
     const inner = item.querySelector('.faq-answer-inner');
 
-    question?.addEventListener('click', () => {
+    question.addEventListener('click', () => {
       const isOpen = item.classList.contains('open');
 
       // Close all
@@ -162,16 +146,17 @@ document.addEventListener('DOMContentLoaded', () => {
   const successScreen = document.getElementById('modal-success-screen');
   const closeSuccessBtn = document.getElementById('close-success-btn');
 
-  // Select all primary CTA triggers on the page
+  // Select all primary CTA triggers on the page to open contact form modal instantly with NO scrolling
   const ctaButtons = document.querySelectorAll(
-    '.btn-primary:not(.submit-btn), .cta-btn, .nav-cta a, a[href="#contact"], .open-demo-btn'
+    '.btn-primary:not(.submit-btn), .cta-btn, .btn-trigger-modal, [data-open-modal]'
   );
 
   ctaButtons.forEach(btn => {
     btn.addEventListener('click', (e) => {
-      // Prevent default scroll or jump behavior
+      // Prevent default jump behavior, mailto triggers, or page scrolling
       e.preventDefault();
       e.stopPropagation();
+      
       if (modal) {
         modal.classList.add('active');
         document.body.style.overflow = 'hidden'; // Lock scrolling in place
@@ -181,9 +166,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (successScreen) successScreen.style.display = 'none';
         if (contactForm) contactForm.reset();
       }
-
-      // Close mobile menu if open
-      mobileMenu?.classList.remove('open');
     });
   });
 
