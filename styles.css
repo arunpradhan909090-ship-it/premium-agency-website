@@ -2095,10 +2095,11 @@ button { font-family: inherit; cursor: pointer; border: none; }
 
 /* ===== SCROLL SEQUENCE TRANSITION ===== */
 .scroll-sequence-container {
-  height: 200vh;
+  height: 120vh;
   position: relative;
   background: #070707; /* Match page dark bg */
   z-index: 10;
+  display: none; /* Revealed by JS once frames load */
 }
 .scroll-sequence-sticky {
   position: sticky;

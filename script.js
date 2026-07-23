@@ -218,22 +218,25 @@ document.addEventListener('DOMContentLoaded', () => {
     const images = [];
     const loadedFlags = new Array(frameCount).fill(false);
     let currentFrameIndex = 0;
+    let anyFrameLoaded = false;
     
-    // Path generator
-    const getPrimaryPath = index => 
-      `ezgif-58268a66386d7d20-jpg/ezgif-frame-${index.toString().padStart(3, '0')}.jpg`;
-    const getFallbackPath = index => 
-      `assets/ezgif-58268a66386d7d20-jpg/ezgif-frame-${index.toString().padStart(3, '0')}.jpg`;
+    // Candidate path generators to support any folder structure on GitHub/Hostinger
+    const candidatePathFns = [
+      idx => `ezgif-58268a66386d7d20-jpg/ezgif-frame-${idx.toString().padStart(3, '0')}.jpg`,
+      idx => `assets/ezgif-58268a66386d7d20-jpg/ezgif-frame-${idx.toString().padStart(3, '0')}.jpg`,
+      idx => `assets/ezgif-frame-${idx.toString().padStart(3, '0')}.jpg`,
+      idx => `ezgif-frame-${idx.toString().padStart(3, '0')}.jpg`
+    ];
 
-    // Draw image like background-size: cover
+    // Draw image stretched to cover canvas cleanly
     function drawImageCover(ctx, img) {
-      if (!img || !img.complete || img.naturalWidth === 0) return;
-      const canvas = ctx.canvas;
-      const imgWidth = img.naturalWidth || img.width;
-      const imgHeight = img.naturalHeight || img.height;
-      if (!imgWidth || !imgHeight) return;
+      if (!img || !img.complete || !img.naturalWidth) return;
+      const cvs = ctx.canvas;
+      if (!cvs.width || !cvs.height) return;
       
-      const canvasRatio = canvas.width / canvas.height;
+      const imgWidth = img.naturalWidth;
+      const imgHeight = img.naturalHeight;
+      const canvasRatio = cvs.width / cvs.height;
       const imgRatio = imgWidth / imgHeight;
       
       let sWidth = imgWidth;
@@ -249,8 +252,8 @@ document.addEventListener('DOMContentLoaded', () => {
         sx = (imgWidth - sWidth) / 2;
       }
       
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.drawImage(img, sx, sy, sWidth, sHeight, 0, 0, canvas.width, canvas.height);
+      ctx.clearRect(0, 0, cvs.width, cvs.height);
+      ctx.drawImage(img, sx, sy, sWidth, sHeight, 0, 0, cvs.width, cvs.height);
     }
     
     function renderFrame(index) {
@@ -258,7 +261,7 @@ document.addEventListener('DOMContentLoaded', () => {
         drawImageCover(ctx, images[index]);
         return;
       }
-      // Find nearest loaded frame if current target isn't ready yet
+      // Find nearest loaded frame if target frame isn't ready
       for (let offset = 1; offset < frameCount; offset++) {
         if (index - offset >= 0 && loadedFlags[index - offset]) {
           drawImageCover(ctx, images[index - offset]);
@@ -271,26 +274,37 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
     
-    // Preload images with fallbacks
+    function tryLoadImage(img, frameNumber, pathAttemptIndex) {
+      if (pathAttemptIndex >= candidatePathFns.length) return;
+      img.src = candidatePathFns[pathAttemptIndex](frameNumber);
+    }
+
+    // Preload all 40 frames
     for (let i = 1; i <= frameCount; i++) {
       const idx = i - 1;
       const img = new Image();
+      let pathAttempt = 0;
       
       img.onload = () => {
         loadedFlags[idx] = true;
+        if (!anyFrameLoaded) {
+          anyFrameLoaded = true;
+          sequenceContainer.style.display = 'block'; // Reveal sequence section once frames load
+          resizeCanvas();
+        }
         if (idx === currentFrameIndex || idx === 0) {
           requestAnimationFrame(() => renderFrame(currentFrameIndex));
         }
       };
       
       img.onerror = () => {
-        // Fallback to assets directory path if root directory load fails
-        if (img.src.indexOf('assets/') === -1) {
-          img.src = getFallbackPath(i);
+        pathAttempt++;
+        if (pathAttempt < candidatePathFns.length) {
+          tryLoadImage(img, i, pathAttempt);
         }
       };
       
-      img.src = getPrimaryPath(i);
+      tryLoadImage(img, i, pathAttempt);
       images.push(img);
     }
     
@@ -302,23 +316,20 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     window.addEventListener('resize', resizeCanvas);
-    resizeCanvas(); // initial size
     
     // Scroll progress handler
     let ticking = false;
     function updateSequence() {
+      if (sequenceContainer.style.display === 'none') return;
       const rect = sequenceContainer.getBoundingClientRect();
       const scrollRange = rect.height - window.innerHeight;
       
       let scrollFraction = 0;
       if (rect.top <= 0) {
-        scrollFraction = -rect.top / scrollRange;
+        scrollFraction = -rect.top / (scrollRange > 0 ? scrollRange : 1);
       }
       
-      // Bound it between 0 and 1
       scrollFraction = Math.min(1, Math.max(0, scrollFraction));
-      
-      // Map progress to frame index
       const frameIndex = Math.min(
         frameCount - 1,
         Math.floor(scrollFraction * frameCount)
@@ -338,9 +349,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }, { passive: true });
 
-    // Initial render
-    setTimeout(updateSequence, 100);
-    setTimeout(updateSequence, 500);
+    setTimeout(updateSequence, 200);
   }
 
 });
