@@ -1,11 +1,10 @@
 // ===== ELEZEX – Premium Interactions =====
 
-// Force scroll to top on page refresh
-if (history.scrollRestoration) {
+// ── Force scroll to top on page reload ──
+if ('scrollRestoration' in history) {
   history.scrollRestoration = 'manual';
 }
 window.scrollTo(0, 0);
-
 document.addEventListener('DOMContentLoaded', () => {
 
   // ── Navbar scroll behavior ──
