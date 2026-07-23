@@ -245,11 +245,13 @@ button { font-family: inherit; cursor: pointer; border: none; }
   gap: 10px;
 }
 .nav-logo-icon {
-  width: 32px;
-  height: 32px;
+  width: 42px;
+  height: 42px;
   object-fit: contain;
   border-radius: 50%;
   display: inline-block;
+  filter: drop-shadow(0 0 6px rgba(56, 189, 248, 0.25));
+  flex-shrink: 0;
 }
 .nav-logo .accent { color: var(--accent-light); }
 .nav-links {
