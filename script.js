@@ -4,7 +4,13 @@
 if ('scrollRestoration' in history) {
   history.scrollRestoration = 'manual';
 }
-window.scrollTo(0, 0);
+window.addEventListener('beforeunload', () => {
+  window.scrollTo(0, 0);
+});
+window.addEventListener('load', () => {
+  setTimeout(() => window.scrollTo(0, 0), 10);
+});
+
 document.addEventListener('DOMContentLoaded', () => {
 
   // ── Navbar scroll behavior ──
@@ -18,6 +24,8 @@ document.addEventListener('DOMContentLoaded', () => {
     } else {
       navbar.classList.remove('scrolled');
     }
+  };
+  window.addEventListener('scroll', handleScroll);
 
   // Active nav link highlighting based on current HTML file page
   const currentPath = window.location.pathname.split('/').pop() || 'index.html';
