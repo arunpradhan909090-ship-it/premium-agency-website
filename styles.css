@@ -2097,3 +2097,13 @@ button { font-family: inherit; cursor: pointer; border: none; }
 
 
 
+
+/* Light Maintenance/Design Card */
+.section-light .maintenance-desc { color: #6B5E4F; }
+.section-light .maintenance-price { color: #221D15; }
+.section-light .maintenance-price .mo { color: #9A9081; }
+.section-light .maintenance-features li { color: #6B5E4F; }
+.section-light .maintenance-card {
+  border-color: rgba(34, 29, 21, 0.14);
+  box-shadow: 0 4px 40px rgba(34, 29, 21, 0.06);
+}
