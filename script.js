@@ -27,11 +27,17 @@ document.addEventListener('DOMContentLoaded', () => {
   };
   window.addEventListener('scroll', handleScroll);
 
-  // Active nav link highlighting based on current HTML file page
-  const currentPath = window.location.pathname.split('/').pop() || 'index.html';
+  // Active nav link highlighting based on current clean URL
+  const currentPath = window.location.pathname;
   navLinks.forEach(link => {
     const href = link.getAttribute('href');
-    if (href === currentPath || (currentPath === '' && href === 'index.html')) {
+    if (!href) return;
+    
+    // Normalize paths to remove trailing slashes for exact matching
+    const normCurrent = currentPath.replace(/\/$/, '') || '/';
+    const normHref = href.replace(/\/$/, '') || '/';
+    
+    if (normHref === normCurrent || (normCurrent === '/index' && normHref === '/')) {
       link.classList.add('active');
     }
   });
